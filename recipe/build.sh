@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euf
 
-set windows=
-if [[ $OS == Windows* ]]; then
+export windows=
+if [[ ${OS:-} == Windows* ]]; then
     windows=1
     export PATH=${LIBRARY_BIN}:$PATH
 fi
@@ -10,13 +10,15 @@ fi
 # there is no build step
 
 export prefix=$PREFIX
-export activate_prefix=$PREFIX
 export etc_lp='${CONDA_PREFIX}/etc/liquidprompt'
+export bin_lp='${CONDA_PREFIX}/bin/liquidprompt'
 
 if [ ! -z ${windows} ]; then
   export prefix=$LIBRARY_PREFIX
   export etc_lp='$(cygpath ${CONDA_PREFIX})/Library/etc/liquidprompt'
+  export bin_lp='$(cygpath ${CONDA_PREFIX})/Library/bin/liquidprompt'
 fi
+export activate_d=$PREFIX/etc/conda/activate.d
 
 sed -e "s|/etc/liquidpromptrc|${etc_lp}rc|g" \
     -i \
@@ -26,9 +28,16 @@ sed -e "s|~/.config/liquidprompt/nojhan.theme|${etc_lp}/liquid.theme|" \
     -i \
     liquidpromptrc-dist
 
-mkdir -p ${activate_prefix}/etc/conda/activate.d
-cp liquidprompt ${activate_prefix}/etc/conda/activate.d/liquidprompt.sh
-cp liquidpromptrc-dist ${prefix}/etc/liquidpromptrc
-
 mkdir -p ${prefix}/etc/liquidprompt
 cp liquid.ps1 liquid.theme ${prefix}/etc/liquidprompt
+cp liquidpromptrc-dist ${prefix}/etc/liquidpromptrc
+
+mkdir -p ${prefix}/bin
+cp liquidprompt ${prefix}/bin
+
+mkdir -p ${activate_d}
+cat > ${activate_d}/liquidprompt.sh <<EOF
+if [[ \$- = *i* ]]; then
+    source ${bin_lp}
+fi
+EOF
