@@ -1,5 +1,5 @@
 {% set name = "liquidprompt" %}
-{% set version = "1.11" %}
+{% set version = "1.12.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   fn: {{ name }}-{{ version }}.tar.gz
-  url: https://github.com/nojhan/{{ name }}/archive/v_{{ version }}.tar.gz
+  url: https://github.com/{{ name }}/{{ name }}/archive/v_{{ version }}.tar.gz
   sha256: 669dde6b8274a57b3e39dc41539d157a86252e40e39bcc4c3102b5a81bd8f2f5
 
 build:
